@@ -2,38 +2,45 @@ import React, {useEffect, useState} from 'react'
 import axios from 'axios'
 
 function Container() {
-    //create state for results
-    const [temp, setTemp] = useState("");
-    const [description, setDescription] = useState("");
+    const [zipcode, setZipcode] = useState("");
+    const [weatherData, setWeatherData] = useState();
+    // const [temp, setTemp] = useState("");
+    // const [description, setDescription] = useState("");
 
-
-    useEffect(
-        ()=>{
-            axios.get("`https://api.openweathermap.org/data/2.5/weather?zip=${zipcode}&units=imperial&appid=${apiKey}`")
-            .then(res=>{
-                // console.log(res.data.results)
-                setTemp(res.data.main.temp)
-                setDescription(res.data.weather[0].description)
-            })
-            .catch(err => console.log(err))
-        }, []
-    )//end of useEffect
+    const apiKey = "acc785dd4ef0fe813c807aa2818b9994";
+    
 
     const getForecast = () => {
-        console.log('change')
+        //I need the zipcode in order to get the forecast
+        console.log('click', zipcode)
+        //use zipcode in API call to get data 
+        axios.get(`https://api.openweathermap.org/data/2.5/weather?zip=${zipcode}&units=imperial&appid=${apiKey}`)
+            .then(res=>{
+                console.log(res.data)
+                // now store this into state
+                setWeatherData(res.data)
+                // setTemp(res.data.main.temp)
+                // setDescription(res.data.weather[0].description)
+            })
+            .catch(err => console.log(err))
     }
+
+
 
   return (
     <div className="container">
         <h1>Your Weather Forecast</h1>
         <p>Enter your zipcode to get the weather forecast</p>
         <form>
-            <input type="number" placeholder="Enter zipcode" className="zipcode"/>
+            <input type="number" placeholder="Enter zipcode" className="zipcode"
+            onChange={(e)=>setZipcode(e.target.value)}
+            />
          </form>
-        <button className="getForecast" onClick={() => getForecast()}>Get Forecast</button>
+        <button className="getForecast" onClick={getForecast}>Get Forecast</button>
         <div className="results">
-            <p>Temp: {temp} </p>
-            <p>Description: {description}</p>
+            <p>City: {weatherData?.name}</p>
+            <p>Temp: {weatherData?.main.temp} </p>
+            {/* <p>Description: {description}</p> */}
             </div>
         {/* <select name="cars" id="cars">
             <option value="volvo">Volvo</option>
